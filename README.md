@@ -1,5 +1,5 @@
 ## Objective  
-Deploy an object detection algorithm ***(mobilenet)*** in a docker container using Google Cloud.
+Deploy an image classification algorithm ***(mobilenet)*** in a docker container using Google Cloud.
 
 
 ## Background  
