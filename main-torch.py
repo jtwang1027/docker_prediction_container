@@ -1,58 +1,55 @@
-from flask import Flask, request, render_template, request, redirect 
+from flask import Flask, request, render_template, request, redirect, url_for 
 import pandas as pd
-import keras
-import numpy as np
-from keras.applications import mobilenet
-from keras.preprocessing.image import load_img
-from keras.preprocessing.image import img_to_array
-from keras.applications.imagenet_utils import decode_predictions
-import tensorflow as tf
 import numpy as np
 import os
-import keras.backend.tensorflow_backend as tb
-tb._SYMBOLIC_SCOPE.value = True
+
 
 app = Flask(__name__)
+#app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+
+APP_ROOT= os.path.dirname(os.path.abspath(__file__)) #for saving uploaded images
 
 
-#Load the MobileNet model
-mobilenet_model = mobilenet.MobileNet(weights='imagenet')
-global graph, mobilenet_model, session #due to flask multi-threading
-graph = tf.get_default_graph() 
-session=init()
+def prediction(filename):
+    '''takes filename, predicts using mobilenet from pytorch
+    and returns tuple (top category, probability)'''
+    import torch
+    import json
+    model = torch.hub.load('pytorch/vision:v0.5.0', 'mobilenet_v2', pretrained=True)
+    model.eval()
 
+    file_read = open("imagenet_class_index.json").read()
+    categ = json.loads(file_read)
+    #print(categ['0'])
 
-APP_ROOT= os.path.dirname(os.path.abspath(__file__))
+    # sample execution (requires torchvision)
+    from PIL import Image
+    from torchvision import transforms
+    input_image = Image.open(filename)
+    preprocess = transforms.Compose([
+        transforms.Resize(256),
+        transforms.CenterCrop(224),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+    ])
+    input_tensor = preprocess(input_image)
+    input_batch = input_tensor.unsqueeze(0) # create a mini-batch as expected by the model
+    with torch.no_grad():
+        output = model(input_batch)
 
-
-def prediction(image):
-    '''generates prediction on image using mobilenet'''
-
-    # load an image in PIL format
-    original_image = load_img(image, target_size=(224, 224))
+    # The output has unnormalized scores. To get probabilities, you can run a softmax on it.
+    probab=torch.nn.functional.softmax(output[0], dim=0)
+    idx=sorted(range(len(probab)), key=lambda i: probab[i])[-3:] #top 3 predictions
     
-    
-    print('1')
-    # convert the PIL image (width, height) to a NumPy array (height, width, channel)
-    numpy_image = img_to_array(original_image)
-    #print(numpy_image.shape)
-    print('2')
-    # Convert the image into 4D Tensor (samples, height, width, channels) by adding an extra dimension to the axis 0.
-    input_image = np.expand_dims(numpy_image, axis=0)
-    print('3')
-    processed_image_mobilenet = mobilenet.preprocess_input(input_image.copy())
-    print('4')
-    with session.as_default():
-        with graph.as_default():
-            predictions_mobilenet = mobilenet_model.predict(processed_image_mobilenet)
-            print('5')
-            label_mobilenet = decode_predictions(predictions_mobilenet)
-    print('6')
-    print(label_mobilenet)
-    print('7')
-    return(label_mobilenet)
+    most_prob=str(probab[idx[-1]].numpy()) #probability of most likely category
+    print(categ[str(idx[-1])])
+    print(most_prob)
+    print('finished')
+    return( (categ[str(idx[-1])][1], most_prob)) 
 
-
+#################
+##APP BELOW
+###########
 
 @app.route('/')
 def index():
@@ -60,7 +57,7 @@ def index():
 
 @app.route('/upload-image', methods=['GET', 'POST']) #get/post generates a request object
 def upload_image():
-    target=os.path.join(APP_ROOT,'images/')
+    target=os.path.join(APP_ROOT,'static/')
     #print(target)
     if not os.path.isdir(target):
         os.mkdir(target)
@@ -71,11 +68,10 @@ def upload_image():
             print(image)
             destination= '/'.join([target,image.filename])
             print(destination)
-            image.save(destination)
-            print(image)
-            prediction(destination)
             
-            return redirect(request.url)
+            image.save(destination)
+            output=prediction(destination)
+            return render_template('prediction.html',pred_class=output[0], probability=output[1], filepath=image.filename )
 
     return render_template('upload_image.html')
 
