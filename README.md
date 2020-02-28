@@ -1,5 +1,5 @@
 ## Objective  
-Deploy an image classification algorithm ***(mobilenet)*** in a docker container using Google Cloud.
+Build a Docker container containing the image classification algorithm ***(mobilenet)*** and access it via Flask application.
 
 
 ## Background  
