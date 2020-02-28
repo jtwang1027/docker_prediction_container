@@ -1,5 +1,5 @@
 ## Objective  
-Build a Docker container containing the image classification algorithm ***(mobilenet)*** and access it via Flask application.
+Build a Docker container holding the image classification algorithm ***(mobilenet)*** and access it via Flask application.
 
 
 ## Background  
