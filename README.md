@@ -8,7 +8,10 @@ Mobilenet (v2.0) is a streamlined architecture used to allow light weight deep n
 
 ## Method  
 A Docker container was built to run the application. The pytorch/pytorch image was pulled from DockerHub and this repository was added (including the flask application (main-torch.py)) and additional packages were added through *requirements.txt* and files (*imagenet_class_index.json* which contains the mapping for imagenet classes (number to class name) used in the main-torch.py app). See the Dockerfile for more details or pull the image *jtwang1027/torch-app* from DockerHub.
-
+```console
+  docker pull jtwang1027/torch-app
+  docker run -it -p 8080:8080 jtwang1027/torch-app
+```
 
 ## Application
 When images are uploaded to /upload-image . The images are saved in the folder *static* and the prediction function is run on the saved image which results in:
