@@ -50,12 +50,14 @@ def prediction(filename):
 #################
 ##APP BELOW
 ###########
-
+'''
 @app.route('/')
 def index():
     return 'placeholder'
-
-@app.route('/upload-image', methods=['GET', 'POST']) #get/post generates a request object
+'''
+#@app.route('/', defaults={'upload-image'})
+#@app.route('/upload-image', methods=['GET', 'POST']) #get/post generates a request object
+@app.route('/', methods=['GET', 'POST']) #get/post generates a request object
 def upload_image():
     target=os.path.join(APP_ROOT,'static/')
     #print(target)

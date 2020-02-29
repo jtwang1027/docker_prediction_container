@@ -8,6 +8,6 @@ test:
 
 
 lint:
-	pylint --disable=R,C main.py
+	pylint --disable=R,C main-torch.py
 
 all: install lint test
