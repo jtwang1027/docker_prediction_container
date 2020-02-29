@@ -17,3 +17,4 @@ When images are uploaded to /upload-image . The images are saved in the folder *
 - Evaluation 
 - predictions are mapped to actual categories using *imagenet_class_index.json*
 
+The application was tested on Google cloud console using test images from the tiny Imagenet test set [(link)](https://tiny-imagenet.herokuapp.com/)
