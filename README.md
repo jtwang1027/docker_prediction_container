@@ -21,3 +21,11 @@ When images are uploaded to /upload-image . The images are saved in the folder *
 - predictions are mapped to actual categories using *imagenet_class_index.json*
 
 The application was tested on Google cloud console using test images from the tiny Imagenet test set [(link)](https://tiny-imagenet.herokuapp.com/)
+
+## Screenshots from demo video  
+***Image upload page***
+<img width="908" alt="upload_image" src="https://user-images.githubusercontent.com/46359281/75620703-fe024500-5b59-11ea-84f7-ed282c36ebe6.png">  
+
+***Predicted image category and probability***  
+<img width="388" alt="predicted_image" src="https://user-images.githubusercontent.com/46359281/75620694-ef1b9280-5b59-11ea-9596-8a8129484d08.png">
+
