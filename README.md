@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ## Objective  
 Build a Docker container holding the image classification algorithm ***(mobilenet)*** and access it via Flask application.
 
